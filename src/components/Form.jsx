@@ -1,11 +1,12 @@
 import FormSection from './FormSection'
 import { useState } from 'react'
+import NewUser from './NewUser'
 
 const Form = ({ props }) => {
     const [nombre, setNombre] = useState()
     const [apellido, setApellido] = useState()
     const [correo, setCorreo] = useState()
-    const [users, setUsers] = useState()
+    const [users, setUsers] = useState([])
 
     const setDataForm = (nameSection, value) => {
         switch (nameSection) {
@@ -21,14 +22,14 @@ const Form = ({ props }) => {
     }
 
     const submit = () => {
-        console.log('nombre ' + nombre)
-        console.log('apellido ' + apellido)
-        console.log('correo ' + correo)
-        const user = [nombre, apellido, correo]
-        setUsers(prevState => ({
-            users: prevState, users
-        }))
-        console.log(users)
+        setUsers(prevUsers => {
+            return [...prevUsers, { id: users.length, nombre: nombre, apellido: apellido, correo: correo }]
+        })
+    }
+
+    const deleteUser = (id) => {
+        const newUsers = users.filter((user) => user.id !== id)
+        setUsers(newUsers)
     }
 
     const arr = []
@@ -37,13 +38,23 @@ const Form = ({ props }) => {
     })
 
     return (
-        <div className='form'>
-            <h1> Formulario </h1>
-            <div className='form-camps'>
-                {arr}
+        <>
+            <div className='form'>
+                <h1> Formulario </h1>
+                <div className='form-camps'>
+                    {arr}
+                </div>
+                <button onClick={submit}>Enviar</button>
             </div>
-            <button onClick={submit}>Enviar</button>
-        </div>
+            {users.length >= 1 ?
+                <div className="users">
+                    {users.map((element, index) => {
+                        return <NewUser key={index} user={element} deleteUser={deleteUser} />
+                    })}
+                </div>
+                : null}
+
+        </>
     )
 }
 
